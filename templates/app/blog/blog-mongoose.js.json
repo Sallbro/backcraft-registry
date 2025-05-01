@@ -1,0 +1,45 @@
+{
+  "name": "blog-mongoose-js",
+  "language": "javascript",
+  "dependencies": ["express", "dotenv", "mongoose", "body-parser"],
+  "devDependencies": ["nodemon"],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "app.js",
+      "content": "const express = require('express');\nconst mongoose = require('mongoose');\nconst dotenv = require('dotenv');\nconst bodyParser = require('body-parser');\nconst postRoutes = require('./routes/posts');\nconst userRoutes = require('./routes/users');\n\ndotenv.config();\n\nconst app = express();\nconst port = process.env.PORT || 3000;\n\napp.use(bodyParser.json());\napp.use('/api/posts', postRoutes);\napp.use('/api/users', userRoutes);\n\nmongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })\n  .then(() => app.listen(port, () => console.log(`Server running on port ${port}`)))\n  .catch((err) => console.error('MongoDB connection error:', err));"
+    },
+    {
+      "path": "routes/posts.js",
+      "content": "const express = require('express');\nconst router = express.Router();\nconst PostController = require('../controllers/PostController');\n\nrouter.post('/', PostController.createPost);\nrouter.get('/', PostController.getAllPosts);\nrouter.get('/:id', PostController.getPostById);\nrouter.put('/:id', PostController.updatePost);\nrouter.delete('/:id', PostController.deletePost);\n\nmodule.exports = router;"
+    },
+    {
+      "path": "routes/users.js",
+      "content": "const express = require('express');\nconst router = express.Router();\nconst UserController = require('../controllers/UserController');\n\nrouter.post('/register', UserController.register);\nrouter.post('/login', UserController.login);\n\nmodule.exports = router;"
+    },
+    {
+      "path": "controllers/PostController.js",
+      "content": "const Post = require('../models/Post');\n\nexports.createPost = async (req, res) => {\n  try {\n    const post = await Post.create(req.body);\n    res.status(201).json(post);\n  } catch (err) {\n    res.status(400).json({ error: err.message });\n  }\n};\n\nexports.getAllPosts = async (req, res) => {\n  try {\n    const posts = await Post.find();\n    res.json(posts);\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n};\n\nexports.getPostById = async (req, res) => {\n  try {\n    const post = await Post.findById(req.params.id);\n    if (!post) return res.status(404).json({ error: 'Post not found' });\n    res.json(post);\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n};\n\nexports.updatePost = async (req, res) => {\n  try {\n    const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });\n    res.json(post);\n  } catch (err) {\n    res.status(400).json({ error: err.message });\n  }\n};\n\nexports.deletePost = async (req, res) => {\n  try {\n    await Post.findByIdAndDelete(req.params.id);\n    res.json({ message: 'Post deleted' });\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n};"
+    },
+    {
+      "path": "controllers/UserController.js",
+      "content": "const User = require('../models/User');\nconst bcrypt = require('bcryptjs');\n\nexports.register = async (req, res) => {\n  try {\n    const hashedPassword = await bcrypt.hash(req.body.password, 10);\n    const user = await User.create({ ...req.body, password: hashedPassword });\n    res.status(201).json(user);\n  } catch (err) {\n    res.status(400).json({ error: err.message });\n  }\n};\n\nexports.login = async (req, res) => {\n  try {\n    const user = await User.findOne({ email: req.body.email });\n    if (!user || !(await bcrypt.compare(req.body.password, user.password))) {\n      return res.status(401).json({ error: 'Invalid credentials' });\n    }\n    res.json({ message: 'Login successful' });\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n};"
+    },
+    {
+      "path": "models/Post.js",
+      "content": "const mongoose = require('mongoose');\n\nconst PostSchema = new mongoose.Schema({\n  title: { type: String, required: true },\n  content: { type: String, required: true },\n  author: { type: String, required: true }\n}, { timestamps: true });\n\nmodule.exports = mongoose.model('Post', PostSchema);"
+    },
+    {
+      "path": "models/User.js",
+      "content": "const mongoose = require('mongoose');\n\nconst UserSchema = new mongoose.Schema({\n  username: { type: String, required: true, unique: true },\n  email: { type: String, required: true, unique: true },\n  password: { type: String, required: true }\n}, { timestamps: true });\n\nmodule.exports = mongoose.model('User', UserSchema);"
+    },
+    {
+      "path": ".env",
+      "content": "PORT=3000\nMONGO_URI=mongodb://localhost:27017/blogDB"
+    },
+    {
+      "path": ".gitignore",
+      "content": "node_modules/\n.env"
+    }
+  ]
+}

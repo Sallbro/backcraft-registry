@@ -1,0 +1,9 @@
+{
+  "name": "backcraft-registry",
+  "version": "1.0.0",
+  "description": "Component and app template registry for Backcraft CLI",
+  "main": "index.js",
+  "keywords": ["cli", "backcraft", "templates", "registry"],
+  "author": "sallbro - salman asu",
+  "license": "MIT"
+}
