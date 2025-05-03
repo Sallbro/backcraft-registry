@@ -1,0 +1,26 @@
+{
+    "name": "payment-notification-system",
+    "language": "javascript",
+    "dependencies": [
+      "express",
+      "dotenv",
+      "stripe"
+    ],
+    "devDependencies": ["nodemon"],
+    "registryDependencies": [],
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\nconst dotenv = require('dotenv');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\ndotenv.config();\n\nconst app = express();\nconst port = process.env.PORT || 3000;\n\napp.use(express.json());\n\napp.post('/webhook', (req, res) => {\n  const sig = req.headers['stripe-signature'];\n  let event;\n\n  try {\n    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);\n  } catch (err) {\n    return res.status(400).send(`Webhook error: ${err.message}`);\n  }\n\n  if (event.type === 'payment_intent.succeeded') {\n    const paymentIntent = event.data.object;\n    console.log('PaymentIntent was successful!', paymentIntent);\n  }\n\n  res.json({ received: true });\n});\n\napp.listen(port, () => console.log('Server running on port ' + port));"
+      },
+      {
+        "path": ".env",
+        "content": "PORT=3000\nSTRIPE_SECRET_KEY=your_stripe_secret_key\nSTRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret"
+      },
+      {
+        "path": ".gitignore",
+        "content": "node_modules/\n.env"
+      }
+    ]
+  }
+  

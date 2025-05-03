@@ -1,0 +1,24 @@
+{
+  "name": "paypal-integration-js",
+  "language": "javascript",
+  "dependencies": ["express", "dotenv", "paypal-rest-sdk", "body-parser"],
+  "devDependencies": ["nodemon"],
+  "files": [
+    {
+      "path": "app.js",
+      "content": "const express = require('express');\nconst dotenv = require('dotenv');\nconst bodyParser = require('body-parser');\nconst paypalRoutes = require('./routes/paypal');\n\ndotenv.config();\nconst app = express();\nconst port = process.env.PORT || 3000;\n\napp.use(bodyParser.json());\napp.use('/api/paypal', paypalRoutes);\n\napp.listen(port, () => console.log(`Server running on port ${port}`));"
+    },
+    {
+      "path": "routes/paypal.js",
+      "content": "const express = require('express');\nconst router = express.Router();\nconst paypal = require('paypal-rest-sdk');\n\npaypal.configure({\n  mode: 'sandbox', // or 'live'\n  client_id: process.env.PAYPAL_CLIENT_ID,\n  client_secret: process.env.PAYPAL_CLIENT_SECRET\n});\n\nrouter.post('/payment', (req, res) => {\n  const payment = {\n    intent: 'sale',\n    payer: { payment_method: 'paypal' },\n    redirect_urls: {\n      return_url: 'http://localhost:3000/success',\n      cancel_url: 'http://localhost:3000/cancel'\n    },\n    transactions: [{\n      amount: { total: '10.00', currency: 'USD' },\n      description: 'Payment description'\n    }]\n  };\n\n  paypal.payment.create(payment, (error, payment) => {\n    if (error) return res.status(500).json({ error });\n    res.json({ approvalUrl: payment.links.find(link => link.rel === 'approval_url').href });\n  });\n});\n\nmodule.exports = router;"
+    },
+    {
+      "path": ".env",
+      "content": "PORT=3000\nPAYPAL_CLIENT_ID=your_paypal_client_id_here\nPAYPAL_CLIENT_SECRET=your_paypal_client_secret_here"
+    },
+    {
+      "path": ".gitignore",
+      "content": "node_modules/\n.env"
+    }
+  ]
+}

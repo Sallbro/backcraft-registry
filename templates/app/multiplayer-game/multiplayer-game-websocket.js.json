@@ -1,0 +1,28 @@
+{
+    "name": "multiplayer-game",
+    "language": "javascript",
+    "dependencies": [
+      "express",
+      "socket.io",
+      "react",
+      "phaser",
+      "dotenv"
+    ],
+    "devDependencies": ["nodemon"],
+    "registryDependencies": [],
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\nconst socketIo = require('socket.io');\nconst http = require('http');\nconst dotenv = require('dotenv');\n\ndotenv.config();\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = socketIo(server);\n\nconst port = process.env.PORT || 3000;\n\nlet gameState = {}; // Game state storage\n\nio.on('connection', (socket) => {\n  console.log('New player connected');\n  socket.emit('gameState', gameState);\n  socket.on('move', (playerMove) => {\n    gameState = updateGameState(playerMove, gameState);\n    io.emit('gameState', gameState);\n  });\n  socket.on('disconnect', () => {\n    console.log('Player disconnected');\n  });\n});\n\nserver.listen(port, () => console.log('Server running on port ' + port));"
+      },
+      {
+        "path": ".env",
+        "content": "PORT=3000"
+      },
+      {
+        "path": ".gitignore",
+        "content": "node_modules/\n.env"
+      }
+    ]
+  }
+  

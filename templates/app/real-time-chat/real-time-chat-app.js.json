@@ -1,0 +1,36 @@
+{
+    "name": "real-time-chat-app",
+    "language": "javascript",
+    "dependencies": [
+      "express",
+      "socket.io",
+      "dotenv",
+      "body-parser",
+      "bcryptjs"
+    ],
+    "devDependencies": ["nodemon"],
+    "registryDependencies": [],
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\nconst socketIo = require('socket.io');\nconst http = require('http');\nconst dotenv = require('dotenv');\nconst bcrypt = require('bcryptjs');\n\ndotenv.config();\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = socketIo(server);\n\nconst port = process.env.PORT || 3000;\n\napp.use(express.json());\n\nio.on('connection', (socket) => {\n  console.log('New user connected');\n  socket.on('disconnect', () => {\n    console.log('User disconnected');\n  });\n});\n\nserver.listen(port, () => console.log('Server running on port ' + port));"
+      },
+      {
+        "path": "routes/chat.js",
+        "content": "const express = require('express');\nconst router = express.Router();\n\n// Routes for user registration and login can be added here\n\nmodule.exports = router;"
+      },
+      {
+        "path": "models/Message.js",
+        "content": "const mongoose = require('mongoose');\n\nconst MessageSchema = new mongoose.Schema({\n  sender: String,\n  receiver: String,\n  content: String,\n  timestamp: { type: Date, default: Date.now }\n});\n\nmodule.exports = mongoose.model('Message', MessageSchema);"
+      },
+      {
+        "path": ".env",
+        "content": "PORT=3000\nMONGO_URI=mongodb://localhost:27017/chatApp"
+      },
+      {
+        "path": ".gitignore",
+        "content": "node_modules/\n.env"
+      }
+    ]
+  }
+  

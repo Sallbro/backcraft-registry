@@ -1,0 +1,28 @@
+{
+    "name": "stock-market-tracker",
+    "language": "javascript",
+    "dependencies": [
+      "express",
+      "socket.io",
+      "axios",
+      "dotenv",
+      "react"
+    ],
+    "devDependencies": ["nodemon"],
+    "registryDependencies": [],
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\nconst socketIo = require('socket.io');\nconst http = require('http');\nconst dotenv = require('dotenv');\nconst axios = require('axios');\n\ndotenv.config();\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = socketIo(server);\n\nconst port = process.env.PORT || 3000;\n\napp.get('/stock/:symbol', async (req, res) => {\n  try {\n    const { symbol } = req.params;\n    const stockData = await axios.get(`https://api.example.com/stocks/${symbol}`);\n    res.json(stockData.data);\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n});\n\nio.on('connection', (socket) => {\n  console.log('New user connected');\n});\n\nserver.listen(port, () => console.log('Server running on port ' + port));"
+      },
+      {
+        "path": ".env",
+        "content": "PORT=3000\nSTOCK_API_KEY=your_api_key_here"
+      },
+      {
+        "path": ".gitignore",
+        "content": "node_modules/\n.env"
+      }
+    ]
+  }
+  

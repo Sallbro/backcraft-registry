@@ -1,0 +1,26 @@
+{
+    "name": "order-tracking-system",
+    "language": "javascript",
+    "dependencies": [
+      "express",
+      "axios",
+      "dotenv"
+    ],
+    "devDependencies": ["nodemon"],
+    "registryDependencies": [],
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\nconst axios = require('axios');\nconst dotenv = require('dotenv');\n\ndotenv.config();\n\nconst app = express();\nconst port = process.env.PORT || 3000;\n\napp.use(express.json());\n\napp.post('/webhook', (req, res) => {\n  const orderData = req.body;\n  console.log('Received webhook:', orderData);\n  // Process the order status\n  res.status(200).send('Webhook received');\n});\n\napp.listen(port, () => console.log('Server running on port ' + port));"
+      },
+      {
+        "path": ".env",
+        "content": "PORT=3000\nWEBHOOK_SECRET=your_secret_key"
+      },
+      {
+        "path": ".gitignore",
+        "content": "node_modules/\n.env"
+      }
+    ]
+  }
+  

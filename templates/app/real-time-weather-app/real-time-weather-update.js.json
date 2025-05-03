@@ -1,0 +1,27 @@
+{
+    "name": "real-time-weather-update",
+    "language": "javascript",
+    "dependencies": [
+      "express",
+      "socket.io",
+      "axios",
+      "dotenv"
+    ],
+    "devDependencies": ["nodemon"],
+    "registryDependencies": [],
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\nconst socketIo = require('socket.io');\nconst http = require('http');\nconst dotenv = require('dotenv');\nconst axios = require('axios');\n\ndotenv.config();\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = socketIo(server);\n\nconst port = process.env.PORT || 3000;\n\napp.use(express.json());\n\nlet weatherData = {};\n\nasync function fetchWeather() {\n  const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=London&appid=${process.env.WEATHER_API_KEY}`);\n  weatherData = response.data;\n  io.emit('weather', weatherData);\n}\n\nsetInterval(fetchWeather, 10000); // Fetch weather every 10 seconds\n\nio.on('connection', (socket) => {\n  console.log('New user connected');\n  socket.emit('weather', weatherData);\n  socket.on('disconnect', () => {\n    console.log('User disconnected');\n  });\n});\n\nserver.listen(port, () => console.log('Server running on port ' + port));"
+      },
+      {
+        "path": ".env",
+        "content": "PORT=3000\nWEATHER_API_KEY=your_weather_api_key_here"
+      },
+      {
+        "path": ".gitignore",
+        "content": "node_modules/\n.env"
+      }
+    ]
+  }
+  

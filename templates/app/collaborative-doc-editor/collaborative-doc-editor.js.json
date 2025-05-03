@@ -1,0 +1,29 @@
+{
+    "name": "collaborative-doc-editor",
+    "language": "javascript",
+    "dependencies": [
+      "express",
+      "socket.io",
+      "dotenv",
+      "react",
+      "mongodb",
+      "bcryptjs"
+    ],
+    "devDependencies": ["nodemon"],
+    "registryDependencies": [],
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\nconst socketIo = require('socket.io');\nconst http = require('http');\nconst dotenv = require('dotenv');\n\ndotenv.config();\n\nconst app = express();\nconst server = http.createServer(app);\nconst io = socketIo(server);\n\nconst port = process.env.PORT || 3000;\n\napp.use(express.json());\n\nlet documentContent = 'Welcome to the collaborative document editor!';\n\nio.on('connection', (socket) => {\n  console.log('New user connected');\n  socket.emit('document', documentContent);\n  socket.on('edit', (newContent) => {\n    documentContent = newContent;\n    socket.broadcast.emit('document', documentContent);\n  });\n  socket.on('disconnect', () => {\n    console.log('User disconnected');\n  });\n});\n\nserver.listen(port, () => console.log('Server running on port ' + port));"
+      },
+      {
+        "path": ".env",
+        "content": "PORT=3000\nMONGO_URI=mongodb://localhost:27017/collaborativeDocs"
+      },
+      {
+        "path": ".gitignore",
+        "content": "node_modules/\n.env"
+      }
+    ]
+  }
+  

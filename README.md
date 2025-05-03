@@ -3,8 +3,7 @@
 The `backcraft-registry` is a companion package for `backcraft-cli` that holds JSON-based registry templates and components. It helps scaffold full applications (`app`) or reusable modules (`component`) into your backend project.
 
 ## 📁 Registry Structure
-templates/ ├── app/ 
-           ├── component/ 
+
 
 ## 📦 Registry Types
 
@@ -16,5 +15,5 @@ templates/ ├── app/
 Used with [backcraft-cli](https://github.com/yourusername/backcraft-cli):
 
 ```bash
-npx backcraft-cli init blog-mongoose
-npx backcraft-cli add auth-mongo
+npx backcraft-cli init blog-mongoose.js.json --registry backcraft-registry
+npx backcraft-cli add auth-mongo.js.json --registry backcraft-registry
