@@ -1,13 +1,18 @@
 {
   "name": "backcraft-registry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Component and app template registry for Backcraft CLI",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Sallbro/backcraft-registry"
   },
-  "keywords": ["cli", "backcraft", "templates", "registry"],
+  "keywords": [
+    "cli",
+    "backcraft",
+    "templates",
+    "registry"
+  ],
   "author": "sallbro - salman asu",
   "license": "MIT"
 }
